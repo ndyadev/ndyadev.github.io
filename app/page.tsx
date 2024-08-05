@@ -4,15 +4,26 @@ export default function Page() {
   return (
     <section>
       <h1 className="mb-8 text-2xl font-semibold tracking-tighter">
-        My Portfolio
+        NDYA Consulting Services Inc.
       </h1>
+      <h3>
+        Affordable Software Consulting
+      </h3>
+      <br />
+      <br />
       <p className="mb-4">
-        {`I'm a Vim enthusiast and tab advocate, finding unmatched efficiency in
-        Vim's keystroke commands and tabs' flexibility for personal viewing
-        preferences. This extends to my support for static typing, where its
-        early error detection ensures cleaner code, and my preference for dark
-        mode, which eases long coding sessions by reducing eye strain.`}
+        We are a software consulting firm that specializes in providing affordable software solutions for small businesses and individuals.
       </p>
+      <p className="mb-4">
+        Please consider us for any of the following needs:<br />
+      </p>
+      <ul>
+        <li>Website/App Development</li>
+        <li>Software Consulting</li>
+        <li>Building strategy for digital presence</li>
+        <li>Guidance for building a SaaS product</li>
+        <li>Website Maintenance</li>
+      </ul>
       <div className="my-8">
         <BlogPosts />
       </div>
