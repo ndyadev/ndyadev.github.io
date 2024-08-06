@@ -1,8 +1,13 @@
 import { ImageResponse } from 'next/og'
 
 export function GET(request: Request) {
-  let url = new URL(request.url)
-  let title = url.searchParams.get('title') || 'NDYA Consulting Services Inc.'
+  let title = 'NDYA Consulting Services Inc.';
+  try {
+    let url = request.url && new URL(request.url)
+    title = url && url.searchParams.get('title') || 'NDYA Consulting Services Inc.'
+  } catch (e) {
+    console.error(`Error: ${e.message}`, { error: e });
+  }
 
   return new ImageResponse(
     (
