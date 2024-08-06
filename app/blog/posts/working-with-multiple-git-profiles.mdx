@@ -1,0 +1,98 @@
+---
+title: 'Working with MULTIPLE Git profiles on same machine'
+publishedAt: '2024-08-05'
+summary: 'Setting up developer machine to work with multiple Git profiles using the same machine'
+---
+
+At times, for a software developer, there might be a need to use multiple git profiles using the very same machine. Although, this isn't a typical scenario - it isn't a rare one. It takes some time and getting "used to" to become comfortable in how you establish your working style when dealing with such a situation.
+
+For this post, lets assume you're using GitHub for your repos to make it easier for understanding. Concepts would remain the same regardless of what provider you're going to use.
+
+This article assumes you already have a git profile associated with your GitHub account, so it is expected you would have a `.ssh/idrsa` file setup with your primary GitHub account used to verify your identity on commit pushes.
+
+Lets look at what's involved?
+
+- Setup Git SSH Keys
+- Updating `.gitconfig`
+- Setting up repositories
+- Verifying the setup
+
+### Setup Git SSH Keys
+
+Lets assume you want to use `example@email.com` as a new email associated with another existing GitHub account that you want to work with.
+
+As you need to add multiple git profiles, you would first need to setup the other account you want to work with. For this, you would first need to setup SSH keys.
+
+To setup new SSH keys for the machine being used, please run following command:
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "example@email.com"
+```
+
+Running this command would ask you to work with multiple prompts - when asked for file name, please enter `id_rsa_profile2` for simplicity sake. You can enter whatever you like, but please keep in mind to replace file name used below for the same.
+
+NOTE: Replace `example@email.com` with your intended email.
+
+Now, you would need to open `.ssh/config` file and update it as follows:
+
+```yaml
+# Profile 1
+Host github.com-profile1
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_rsa
+# Profile 2
+Host github.com-profile2
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_rsa_profile2
+```
+
+Note that it is assumed that `#Profile 1` already existed in `.ssh/config` due to your existing setup working with your primary git profile. The `# Profile 2` is of particular interest in this scenario where you are telling the SSH config that you're going to use multiple git profiles.
+
+Now, since you generated a new SSH key, you need to add that new SSH key to your Github SSH keys.
+
+For above example, you could run this command `pbcopy < ~/.ssh/id_rsa_profile2.pub` to copy contents of the second profile's SSH key. Please add it to your SSH Keys going to your Github Settings.
+
+Now, you can run `ssh-add ~/.ssh/id_rsa_profile2` to activate working with newly added profile.
+
+### Updating `.gitconfig`
+
+Although not required, it is recommended that you do this step to ensure you know what profile you're working with currently.
+
+Edit your `.gitconfig` file by simply running `open ~/.gitconfig`
+
+Setup a new alias as follows:
+
+```bash
+[alias]
+  # Identify current git user in use
+  whoami = "!echo \"$(git config user.name) ($(git config user.email))\""
+```
+
+After making above change and saving it, now when you run `git whoami` in terminal, it will tell you what username and email is in use for adding/pushing commits for your repository.
+
+So, when you are in a repo configured to work with your profile2, ideally you should see `example (example@email.com)` as the output.
+
+### Setting up repositories
+
+Since at this point you now have setup two git profiles to work with, it would be ideal to use `SSH` when cloning repositories.
+
+For this article, lets use [https://github.com/test/HelloWorld](https://github.com/test/HelloWorld) as an example repo to work with.
+
+When you want to clone this repo, you would need to use `SSH` method to clone the repo, rather than using `HTTPS`.
+
+i.e. `git clone git@github.com:test/HelloWorld.git`
+
+Now, you would need to go inside repository `HelloWorld` and run a couple of bash commands:
+
+```bash
+git config --local user.email "example@email.com"
+git config --local user.name "example"
+```
+
+Now, when you run `git whoami`, you would see that amongst your two profiles, you have setup `HelloWorld` repository to actively work with `profile2` with `example@email.com`.
+
+That's it!
+
+Happy coding!!!
